@@ -1,0 +1,58 @@
+{
+  "produits": [
+    {
+      "id": 1,
+      "nom": "robe",
+      "categorie": "Vêtements",
+      "prix": 1000,
+      "stock": 20,
+      "description": "xxxxxxxxxxxxxxxxxxx",
+      "image": "https://via.placeholder.com/100"
+    },
+    {
+      "id": 2,
+      "nom": "robe",
+      "categorie": "Vêtements",
+      "prix": 1590,
+      "stock": 20,
+      "description": "gggggggggggggggggggggggg",
+      "image": "https://via.placeholder.com/100"
+    },
+    {
+      "id": 3,
+      "nom": "robe",
+      "categorie": "Chaussures",
+      "prix": 50,
+      "stock": 1,
+      "description": "hhhhhhhhhhhhhh",
+      "image": "https://via.placeholder.com/100"
+    }
+  ],
+  "users": [
+    {
+      "id": 1,
+      "prenom": "Awa",
+      "nom": "Diatta",
+      "adresse": "Dakar",
+      "tel": "764531234",
+      "sexe": "Feminin",
+      "metiers": [
+        "Développeur",
+        "Autre"
+      ]
+    },
+    {
+      "prenom": "Awa Moussa",
+      "nom": "Ndiaye",
+      "adresse": "Baol",
+      "tel": "774538950",
+      "sexe": "Feminin",
+      "metiers": [
+        "Designer",
+        "Manager"
+      ],
+      "id": 2
+    }
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
+}
