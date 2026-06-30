@@ -1,36 +1,18 @@
 {
   "produits": [
     {
-      "id": 1,
-      "nom": "robe",
-      "categorie": "Vêtements",
-      "prix": 1000,
-      "stock": 20,
-      "description": "xxxxxxxxxxxxxxxxxxx",
-      "image": "https://via.placeholder.com/100"
-    },
-    {
-      "id": 2,
-      "nom": "robe",
-      "categorie": "Vêtements",
-      "prix": 1590,
-      "stock": 20,
-      "description": "gggggggggggggggggggggggg",
-      "image": "https://via.placeholder.com/100"
-    },
-    {
-      "id": 3,
-      "nom": "robe",
-      "categorie": "Chaussures",
-      "prix": 50,
-      "stock": 1,
-      "description": "hhhhhhhhhhhhhh",
-      "image": "https://via.placeholder.com/100"
+      "nom": "lait",
+      "categorie": "Alimentation",
+      "prix": 3000,
+      "stock": 97000,
+      "description": "ttttttttttttt",
+      "image": "https://placehold.co/100x100",
+      "id": 1
     }
   ],
   "users": [
     {
-      "id": 1,
+      "id": "1",
       "prenom": "Awa",
       "nom": "Diatta",
       "adresse": "Dakar",
@@ -42,16 +24,16 @@
       ]
     },
     {
-      "prenom": "Awa Moussa",
-      "nom": "Ndiaye",
-      "adresse": "Baol",
-      "tel": "774538950",
-      "sexe": "Feminin",
+      "id": "11",
+      "prenom": "al amine",
+      "nom": "mar",
+      "adresse": "Dakar",
+      "tel": "709876645",
+      "sexe": "Masculin",
       "metiers": [
-        "Designer",
-        "Manager"
-      ],
-      "id": 2
+        "Développeur",
+        "Designer"
+      ]
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"

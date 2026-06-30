@@ -127,6 +127,8 @@ document.getElementById("userForm").addEventListener("submit", async (e) => {
       body: JSON.stringify(user)
     });
 
+  showToast("Utilisateur ajouté ✔️", "success");
+
     editId = null;
   }
 
@@ -140,11 +142,12 @@ document.getElementById("userForm").addEventListener("submit", async (e) => {
         ...user
       })
     });
+  showToast("Utilisateur ajouté ✔️", "success");
+
   }
 
   e.target.reset();
   selectBtn.textContent = "Sélectionner métiers";
-
   loadUsers();
 });
 
@@ -155,6 +158,8 @@ async function deleteUser(id) {
   await fetch(`${API_URL}/${id}`, {
     method: "DELETE"
   });
+
+  showToast("Utilisateur supprimé 🗑️", "error");
 
   loadUsers();
 }
@@ -264,6 +269,32 @@ function renderTable() {
 ====================== */
 function error(field, msg) {
   document.getElementById("error-" + field).textContent = msg;
+}
+
+
+// toast
+function showToast(message, type = "success") {
+    const container = document.getElementById("toastContainer");
+
+    const toast = document.createElement("div");
+
+    toast.className = `
+        bg-green-500 text-white px-5 py-3 rounded-lg shadow-lg
+        transition-all duration-500
+    `;
+
+    toast.textContent = message;
+
+    container.appendChild(toast);
+
+    setTimeout(() => {
+        toast.style.opacity = "0";
+        toast.style.transform = "translateX(20px)";
+    }, 4500);
+
+    setTimeout(() => {
+        toast.remove();
+    }, 5000);
 }
 
 /* ======================

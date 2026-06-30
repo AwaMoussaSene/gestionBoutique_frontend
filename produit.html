@@ -6,6 +6,7 @@
     <title>Gestion Boutique</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <link rel="stylesheet" href="style.css">
   </head>
   <body class="bg-gray-100">
 
@@ -142,8 +143,8 @@
 
               <div class="flex justify-end pt-2">
                 <button type="submit"
-                  class="bg-orange-500 hover:bg-orange-600 text-white font-medium text-sm px-6 py-2.5 rounded-lg transition shadow-sm">
-                  <i class="fas fa-save mr-2"></i> Enregistrer
+                  class="bg-orange-500 cursor-pointer hover:bg-orange-600 text-white font-medium text-sm px-6 py-2.5 rounded-lg transition shadow-sm">
+                  <i class="fas fa-save mr-2 "></i> Enregistrer
                 </button>
               </div>
             </form>
@@ -198,6 +199,12 @@
         </main>
       </div>
     </div>
+
+    <!-- TOAST CONTAINER -->
+    <div id="toastContainer"
+        class="fixed top-5 right-5 space-y-3 z-50">
+    </div>
+
 
     <script src="produit.js"></script>
 
