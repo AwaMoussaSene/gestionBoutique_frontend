@@ -3,7 +3,7 @@ const API_URL = "http://localhost:3000/users";
 let users = [];
 let viewMode = "list";
 let editId = null;
-
+let deleteId = null;
 /* ======================
    ID GENERATOR
 ====================== */
@@ -49,6 +49,19 @@ selectBtn.addEventListener("mouseleave", () => {
     }
   }, 150);
 });
+document.querySelectorAll(".metier").forEach(cb => {
+  cb.addEventListener("change", updateMetierText);
+});
+function updateMetierText() {
+  const selected = Array.from(document.querySelectorAll(".metier:checked"))
+    .map(cb => cb.value);
+
+  if (selected.length === 0) {
+    selectBtn.textContent = "Sélectionner métiers";
+  } else {
+    selectBtn.textContent = selected.join(", ");
+  }
+}
 /* ======================
    SWITCH VIEW
 ====================== */
@@ -61,6 +74,7 @@ document.getElementById("btnCard").addEventListener("click", () => {
   viewMode = "card";
   renderTable();
 });
+
 
 /* ======================
    SUBMIT CREATE / UPDATE
@@ -81,19 +95,19 @@ document.getElementById("userForm").addEventListener("submit", async (e) => {
   let isValid = true;
   const prefixes = ["77", "78", "70", "71", "76", "75"];
 
-  if (!prenom) { error("prenom", "obligatoire"); isValid = false; }
-  if (!nom) { error("nom", "obligatoire"); isValid = false; }
-  if (!adresse) { error("adresse", "obligatoire"); isValid = false; }
-  if (!sexe) { error("sexe", "obligatoire"); isValid = false; }
+  if (!prenom) { error("prenom", "prenom obligatoire"); isValid = false; }
+  if (!nom) { error("nom", "nom obligatoire"); isValid = false; }
+  if (!adresse) { error("adresse", "adresse obligatoire"); isValid = false; }
+  if (!sexe) { error("sexe", "sexe obligatoire"); isValid = false; }
 
   if (!tel) {
-    error("tel", "obligatoire");
+    error("tel", "telephone obligatoire");
     isValid = false;
   } else if (!/^\d{9}$/.test(tel)) {
-    error("tel", "9 chiffres requis");
+    error("tel", "tel au max 9 chiffres ");
     isValid = false;
   } else if (!prefixes.includes(tel.substring(0, 2))) {
-    error("tel", "mauvais préfixe");
+    error("tel", "mauvais préfixe 77 | 78 | 76 | 70 | 71 | 75...");
     isValid = false;
   } else {
     const telExiste = users.some(u => u.tel === tel && u.id !== editId);
@@ -104,7 +118,7 @@ document.getElementById("userForm").addEventListener("submit", async (e) => {
   }
 
   if (metiers.length < 2) {
-    error("metier", "min 2 métiers");
+    error("metier", "mininum 2 métiers");
     isValid = false;
   }
 
@@ -146,47 +160,85 @@ document.getElementById("userForm").addEventListener("submit", async (e) => {
 
   }
 
-  e.target.reset();
-  selectBtn.textContent = "Sélectionner métiers";
-  loadUsers();
+ openDrawer();
+
+document.getElementById("drawerTitle").textContent =
+  "Modifier utilisateur";
 });
 
 /* ======================
    DELETE
 ====================== */
-async function deleteUser(id) {
-  await fetch(`${API_URL}/${id}`, {
+function askDelete(id) {
+  deleteId = id;
+
+  document.getElementById("deleteModal")
+    .classList.remove("hidden");
+
+  document.getElementById("deleteModal")
+    .classList.add("flex");
+}
+
+async function confirmDelete() {
+  if (!deleteId) return;
+
+  await fetch(`${API_URL}/${deleteId}`, {
     method: "DELETE"
   });
 
-  showToast("Utilisateur supprimé 🗑️", "error");
+  showToast("Utilisateur supprimé 🗑️", "success");
+
+  closeDeleteModal();
+  deleteId = null;
 
   loadUsers();
 }
 
+function closeDeleteModal() {
+  document.getElementById("deleteModal")
+    .classList.add("hidden");
+
+  document.getElementById("deleteModal")
+    .classList.remove("flex");
+
+  deleteId = null;
+}
 /* ======================
    EDIT
 ====================== */
 function editUser(id) {
-  const u = users.find(user => Number(user.id) === Number(id));
+
+  const u = users.find(x => x.id == id);
   if (!u) return;
 
   editId = id;
 
-  document.getElementById("prenom").value = u.prenom || "";
-  document.getElementById("nom").value = u.nom || "";
-  document.getElementById("adresse").value = u.adresse || "";
-  document.getElementById("tel").value = u.tel || "";
+  document.getElementById("prenom").value = u.prenom;
+  document.getElementById("nom").value = u.nom;
+  document.getElementById("adresse").value = u.adresse;
+  document.getElementById("tel").value = u.tel;
 
-  document.querySelectorAll('input[name="sexe"]').forEach(radio => {
-    radio.checked = radio.value === u.sexe;
-  });
+  const sexeValue = (u.sexe || "").trim().toLowerCase();
 
-  document.querySelectorAll(".metier").forEach(cb => {
-    cb.checked = (u.metiers || []).includes(cb.value);
-  });
+document.querySelectorAll('input[name="sexe"]').forEach(radio => {
+  radio.checked = radio.value.trim().toLowerCase() === sexeValue;
+});
 
-  selectBtn.textContent = (u.metiers || []).join(", ");
+document.querySelectorAll(".metier").forEach(cb => {
+  cb.checked = (u.metiers || []).includes(cb.value);
+});
+
+  updateMetierText();
+
+  // OUVRIR DRAWER
+  document.getElementById("drawer").classList.remove("hidden");
+  document.getElementById("drawer").classList.remove("w-0");
+  document.getElementById("drawer").classList.add("w-1/3");
+
+  document.getElementById("tableSection").classList.add("w-2/3");
+
+  document.getElementById("drawerTitle").textContent =
+    "Modifier utilisateur";
 }
 /* ======================
    RENDER TABLE / CARDS
@@ -222,7 +274,7 @@ function renderTable() {
             <button onclick="editUser('${u.id}')" class="bg-blue-100 text-blue-600 hover:bg-blue-200 px-3 py-1.5 cursor-pointer rounded-lg text-xs transition mr-1">
               <i class="fa-solid fa-pen-to-square"></i>
             </button>
-            <button onclick="deleteUser('${u.id}')" class="bg-red-100 text-red-600 hover:bg-red-200 px-3 py-1.5 cursor-pointer rounded-lg text-xs transition">
+            <button onclick="askDelete('${u.id}')" class="bg-red-100 text-red-600 hover:bg-red-200 px-3 py-1.5 cursor-pointer rounded-lg text-xs transition">
               <i class="fa-solid fa-trash"></i>
             </button>
           </td>
@@ -255,7 +307,7 @@ function renderTable() {
             <button onclick="editUser('${u.id}')" class="flex-1 bg-blue-100 text-blue-600 hover:bg-blue-200 py-1.5 cursor-pointer rounded-lg text-xs transition">
               <i class="fa-solid fa-pen-to-square mr-1"></i> Modifier
             </button>
-            <button onclick="deleteUser('${u.id}')" class="flex-1 bg-red-100 text-red-600 hover:bg-red-200 py-1.5 cursor-pointer rounded-lg text-xs transition">
+            <button onclick="askDelete('${u.id}')" class="flex-1 bg-red-100 text-red-600 hover:bg-red-200 py-1.5 cursor-pointer rounded-lg text-xs transition">
               <i class="fa-solid fa-trash mr-1"></i> Supprimer
             </button>
           </div>
@@ -271,7 +323,50 @@ function error(field, msg) {
   document.getElementById("error-" + field).textContent = msg;
 }
 
+// drawer
+function openDrawer() {
 
+  editId = null;
+
+  document.getElementById("drawerTitle").textContent =
+    "Ajouter utilisateur";
+
+  document.getElementById("userForm").reset();
+document.getElementById("drawer").classList.add("shadow-[8px_0_30px_rgba(249,115,22,0.2)]");
+  // afficher drawer
+  document.getElementById("drawer").classList.remove("hidden");
+
+  // animation largeur
+  document.getElementById("drawer").classList.remove("w-0");
+  document.getElementById("drawer").classList.add("w-1/3");
+
+  // réduire tableau
+  document.getElementById("tableSection")
+    .classList.remove("flex-1");
+
+  document.getElementById("tableSection")
+    .classList.add("w-2/3");
+}
+function closeDrawer() {
+
+  document.getElementById("drawer")
+    .classList.add("w-0");
+
+  document.getElementById("drawer")
+    .classList.remove("w-1/3");
+
+  setTimeout(() => {
+    document.getElementById("drawer")
+      .classList.add("hidden");
+  }, 300);
+
+  // remettre tableau normal
+  document.getElementById("tableSection")
+    .classList.remove("w-2/3");
+
+  document.getElementById("tableSection")
+    .classList.add("flex-1");
+}
 // toast
 function showToast(message, type = "success") {
     const container = document.getElementById("toastContainer");

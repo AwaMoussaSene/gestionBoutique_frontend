@@ -3,28 +3,27 @@ const API_URL = "http://localhost:3000/produits";
 let produits = [];
 let editId = null;
 let viewMode = "list";
+let deleteId = null;
+let currentImage = "";
 
 /* ======================
-   ID GENERATOR (INT)
-====================== */
-function nextId(list) {
-  return list.reduce((max, p) => {
-    const id = Number(p.id);
-    return id > max ? id : max;
-  }, 0) + 1;
-}
-
-/* ======================
-   LOAD PRODUITS
+   LOAD
 ====================== */
 async function fetchProduits() {
   const res = await fetch(API_URL);
-  produits = await res.json();
-  render();
+produits = (await res.json()).filter(p => p.isDelete !== true);
+render();
 }
 
 /* ======================
-   CLOUDINARY UPLOAD
+   NEXT ID
+====================== */
+function nextId(list) {
+  return list.reduce((max, p) => Math.max(max, Number(p.id)), 0) + 1;
+}
+
+/* ======================
+   CLOUDINARY
 ====================== */
 async function uploadImage(file) {
   if (!file) return "";
@@ -35,52 +34,125 @@ async function uploadImage(file) {
 
   const res = await fetch(
     "https://api.cloudinary.com/v1_1/dforeshog/image/upload",
-    {
-      method: "POST",
-      body: formData
-    }
+    { method: "POST", body: formData }
   );
 
   const data = await res.json();
-
-  if (!data.secure_url) {
-    console.log("Cloudinary error:", data);
-    return "";
-  }
-
-  return data.secure_url;
+  return data.secure_url || "";
 }
 
 /* ======================
-   SUBMIT CREATE / UPDATE
+   OPEN MODAL
+====================== */
+function openModal() {
+  editId = null;
+
+  document.getElementById("modalTitle").textContent = "Ajouter un produit";
+  document.getElementById("produitForm").reset();
+
+  document.getElementById("produitModal").classList.remove("hidden");
+  document.getElementById("produitModal").classList.add("flex");
+  document.getElementById("previewContainer").classList.add("hidden");
+  document.getElementById("previewImage").src = "";
+  document.getElementById("produitImage").value = "";
+}
+
+/* ======================
+   CLOSE MODAL
+====================== */
+function closeModal() {
+  document.getElementById("produitModal").classList.add("hidden");
+  document.getElementById("produitModal").classList.remove("flex");
+  document.getElementById("previewContainer").classList.add("hidden");
+document.getElementById("previewImage").src = "";
+document.getElementById("produitImage").value = "";
+  
+}
+
+/* ======================
+   EDIT
+====================== */
+function editProduit(id) {
+  const p = produits.find(x => String(x.id) === String(id));
+  if (!p) return;
+
+  editId = id;
+  currentImage = p.image;
+
+  document.getElementById("previewImage").src = p.image;
+
+  document
+      .getElementById("previewContainer")
+      .classList.remove("hidden");
+  document.getElementById("modalTitle").textContent = "Modifier produit";
+
+  document.getElementById("produitNom").value = p.nom;
+  document.getElementById("produitCategorie").value = p.categorie;
+  document.getElementById("produitPrix").value = p.prix;
+  document.getElementById("produitStock").value = p.stock;
+  document.getElementById("produitDescription").value = p.description;
+
+  document.getElementById("produitImage").value = "";
+
+  document.getElementById("produitModal").classList.remove("hidden");
+  document.getElementById("produitModal").classList.add("flex");
+}
+
+// error
+function error(field, msg) {
+  const el = document.getElementById("error-" + field);
+  if (el) el.textContent = msg;
+}
+/* ======================
+   SUBMIT (ADD / EDIT)
 ====================== */
 document.getElementById("produitForm").addEventListener("submit", async (e) => {
   e.preventDefault();
+
+  // reset erreurs
+  document.querySelectorAll("[id^='error-']").forEach(el => el.textContent = "");
 
   const nom = document.getElementById("produitNom").value.trim();
   const categorie = document.getElementById("produitCategorie").value;
   const prix = Number(document.getElementById("produitPrix").value);
   const stock = Number(document.getElementById("produitStock").value);
   const description = document.getElementById("produitDescription").value.trim();
-  const imageFile = document.getElementById("produitImage").files[0];
-
-  document.querySelectorAll("p[id^='error']").forEach(e => e.textContent = "");
+  const file = document.getElementById("produitImage").files[0];
 
   let ok = true;
 
-  if (!nom) { error("produitNom", "obligatoire"); ok = false; }
-  if (!categorie) { error("produitCategorie", "obligatoire"); ok = false; }
-  if (!prix || prix <= 0) { error("produitPrix", "prix invalide"); ok = false; }
-  if (!stock || stock < 0) { error("produitStock", "stock invalide"); ok = false; }
-  if (description.length < 5) { error("produitDescription", "min 5 caractères"); ok = false; }
+  if (!nom) {
+    error("produitNom", "Nom du produit obligatoire");
+    ok = false;
+  }
+
+  if (!categorie) {
+    error("produitCategorie", "Catégorie obligatoire");
+    ok = false;
+  }
+
+  if (!prix || prix <= 0) {
+    error("produitPrix", "Prix invalide");
+    ok = false;
+  }
+
+  if (!stock || stock < 0) {
+    error("produitStock", "Stock invalide");
+    ok = false;
+  }
+
+  if (description.length < 3) {
+    error("produitDescription", "Description trop courte");
+    ok = false;
+  }
 
   if (!ok) return;
 
-  let imageUrl = "";
+let imageUrl = currentImage;
 
-  if (imageFile) {
-    imageUrl = await uploadImage(imageFile);
-  }
+if (file) {
+  imageUrl = await uploadImage(file);
+}
 
   const produit = {
     nom,
@@ -88,12 +160,11 @@ document.getElementById("produitForm").addEventListener("submit", async (e) => {
     prix,
     stock,
     description,
-    image: imageUrl || "https://placehold.co/100x100"
+    image: imageUrl || "https://placehold.co/100x100",
+    isDelete: false
   };
 
-  /* ======================
-     UPDATE
-  ====================== */
+  // update produit
   if (editId !== null) {
     await fetch(`${API_URL}/${editId}`, {
       method: "PUT",
@@ -102,14 +173,10 @@ document.getElementById("produitForm").addEventListener("submit", async (e) => {
     });
 
     showToast("Produit modifié ✔️", "info");
-
-    editId = null;
-  }
-
-  /* ======================
-     CREATE
-  ====================== */
+  } 
+  // ajouter produit
   else {
+    
     await fetch(API_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -118,11 +185,11 @@ document.getElementById("produitForm").addEventListener("submit", async (e) => {
         ...produit
       })
     });
-  showToast("Produit ajouté avec succès ✔️", "success");
 
+    showToast("Produit ajouté ✔️", "success");
   }
 
-  e.target.reset();
+  closeModal();
   fetchProduits();
 });
 
@@ -131,43 +198,102 @@ document.getElementById("produitForm").addEventListener("submit", async (e) => {
 ====================== */
 async function deleteProduit(id) {
   await fetch(`${API_URL}/${id}`, {
-    method: "DELETE"
-  });
+    method: "PUT",
+    headers: {
+        "Content-Type":"application/json"
+    },
+    body: JSON.stringify({
+        ...produit,
+        isDelete: true
+    })
+});
 
   showToast("Produit supprimé 🗑️", "error");
-
   fetchProduits();
 }
+// confirmation de la supression
+function askDelete(id) {
+  deleteId = id;
 
-/* ======================
-   EDIT (IMPORTANT FIX)
-====================== */
-function editProduit(id) {
-  const p = produits.find(x => String(x.id) === String(id));
+  document.getElementById("deleteModal")
+    .classList.remove("hidden");
 
-  if (!p) {
-    console.log("Produit introuvable:", id);
-    return;
+  document.getElementById("deleteModal")
+    .classList.add("flex");
+}
+async function confirmDelete() {
+
+  if (!deleteId) return;
+
+  const produit = produits.find(p => p.id == deleteId);
+
+  if (!produit) return;
+
+  try {
+    await fetch(`${API_URL}/${deleteId}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        ...produit,
+        isDelete: true
+      })
+    });
+
+    closeDeleteModal();
+
+    showToast("Produit supprimé 🗑️", "error");
+
+    deleteId = null;
+
+    fetchProduits();
+
+  } catch (err) {
+    showToast("Erreur lors de la suppression ❌", "error");
   }
+}
+function closeDeleteModal() {
+  document.getElementById("deleteModal") .classList.add("hidden");
+  document.getElementById("deleteModal") .classList.remove("flex");
+  deleteId = null;
+}
+/* ======================
+   TOAST
+====================== */
+function showToast(message, type = "success") {
+  const container = document.getElementById("toastContainer");
 
-  editId = id;
+  const colors = {
+    success: "bg-green-500",
+    error: "bg-red-500",
+    info: "bg-blue-500",
+    warning: "bg-yellow-500"
+  };
 
-  document.getElementById("produitNom").value = p.nom || "";
-  document.getElementById("produitCategorie").value = p.categorie || "";
-  document.getElementById("produitPrix").value = p.prix || "";
-  document.getElementById("produitStock").value = p.stock || "";
-  document.getElementById("produitDescription").value = p.description || "";
+  const toast = document.createElement("div");
 
-  document.getElementById("produitNom").focus();
-  document.getElementById("produitForm").scrollIntoView({
-    behavior: "smooth"
-  });
+  toast.className = `
+    ${colors[type]} text-white px-4 py-3 rounded-lg shadow-lg
+    transition-all duration-500
+  `;
 
-  console.log("EDIT MODE:", p);
+  toast.textContent = message;
+
+  container.appendChild(toast);
+
+  setTimeout(() => {
+    toast.style.opacity = "0";
+    toast.style.transform = "translateX(20px)";
+  }, 4500);
+
+  setTimeout(() => {
+    toast.remove();
+  }, 5000);
 }
 
 /* ======================
-   RENDER (LIST + CARD STYLE USER)
+   RENDER (TON CODE INCHANGÉ)
 ====================== */
 function render() {
   const tbody = document.getElementById("produitTableBody");
@@ -197,14 +323,12 @@ function render() {
             <button onclick="editProduit('${p.id}')" class="bg-blue-100 text-blue-600 hover:bg-blue-200 px-3 py-1.5 cursor-pointer rounded-lg text-xs transition mr-1">
               <i class="fa-solid fa-pen-to-square"></i>
             </button>
-            <button onclick="deleteProduit('${p.id}')" class="bg-red-100 text-red-600 hover:bg-red-200 px-3 py-1.5 cursor-pointer rounded-lg text-xs transition">
+            <button onclick="askDelete('${p.id}')" class="bg-red-100 text-red-600 hover:bg-red-200 px-3 py-1.5 cursor-pointer rounded-lg text-xs transition">
               <i class="fa-solid fa-trash"></i>
             </button>
           </td>
         </tr>
       `;
-//       console.log(p);
-// console.log(p.image);
     });
 
   } else {
@@ -236,7 +360,7 @@ function render() {
             <button onclick="editProduit('${p.id}')" class="flex-1 bg-blue-100 text-blue-600 hover:bg-blue-200 py-1.5 cursor-pointer rounded-lg text-xs transition">
                <i class="fa-solid fa-pen-to-square mr-1"></i> Modifier
             </button>
-            <button onclick="deleteProduit('${p.id}')" class="flex-1 bg-red-100 text-red-600 hover:bg-red-200 py-1.5 cursor-pointer rounded-lg text-xs transition">
+            <button onclick="askDelete('${p.id}')" class="flex-1 bg-red-100 text-red-600 hover:bg-red-200 py-1.5 cursor-pointer rounded-lg text-xs transition">
               <i class="fa-solid fa-trash mr-1"></i> Supprimer
             </button>
           </div>
@@ -245,6 +369,9 @@ function render() {
     });
   }
 }
+
+
+
 
 /* ======================
    VIEW MODE
@@ -259,53 +386,29 @@ document.getElementById("btnProduitCard").addEventListener("click", () => {
   render();
 });
 
-/* ======================
-   ERROR
-====================== */
-function error(field, msg) {
-  document.getElementById("error-" + field).textContent = msg;
-}
+// affichage de l'image dans le modal
+const imageInput = document.getElementById("produitImage");
 
-// toast
-function showToast(message, type = "success") {
-    const container = document.getElementById("toastContainer");
+imageInput.addEventListener("change", function () {
 
-    const toast = document.createElement("div");
+    const file = this.files[0];
 
-    let color = "bg-green-500";
+    if (!file) return;
 
-    if (type === "error") color = "bg-red-500";
-    if (type === "info") color = "bg-blue-500";
-    if (type === "warning") color = "bg-yellow-500";
+    const reader = new FileReader();
 
-    toast.className = `
-        ${color} text-white px-5 py-3 rounded-lg shadow-lg
-        transition-all duration-300 transform
-    `;
+    reader.onload = function (e) {
 
-    toast.textContent = message;
+        document.getElementById("previewImage").src = e.target.result;
 
-    container.appendChild(toast);
+        document
+            .getElementById("previewContainer")
+            .classList.remove("hidden");
+    };
 
-    // animation entrée
-    toast.style.opacity = "0";
-    toast.style.transform = "translateX(30px)";
+    reader.readAsDataURL(file);
 
-    setTimeout(() => {
-        toast.style.opacity = "1";
-        toast.style.transform = "translateX(0)";
-    }, 50);
-
-    // disparition après 5s
-    setTimeout(() => {
-        toast.style.opacity = "0";
-        toast.style.transform = "translateX(30px)";
-    }, 4500);
-
-    setTimeout(() => {
-        toast.remove();
-    }, 5000);
-}
+});
 
 
 /* ======================

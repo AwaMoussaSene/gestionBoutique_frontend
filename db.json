@@ -1,27 +1,38 @@
 {
   "produits": [
     {
-      "nom": "lait",
-      "categorie": "Alimentation",
-      "prix": 3000,
-      "stock": 97000,
-      "description": "ttttttttttttt",
-      "image": "https://placehold.co/100x100",
-      "id": 1
+      "id": 1,
+      "nom": "robe",
+      "categorie": "Vêtements",
+      "prix": 5000,
+      "stock": 70,
+      "description": "ttttttttttttttt",
+      "image": "https://res.cloudinary.com/dforeshog/image/upload/v1782837145/r1c14u3w7gn4xlnq5b3m.jpg",
+      "isDelete": false
+    },
+    {
+      "nom": "robe",
+      "categorie": "Vêtements",
+      "prix": 20000,
+      "stock": 100,
+      "description": "Des robes de qualites",
+      "image": "https://res.cloudinary.com/dforeshog/image/upload/v1782838806/rla4fqbrnbto7s9xtonm.jpg",
+      "isDelete": false,
+      "id": 2
     }
   ],
   "users": [
     {
-      "id": "1",
       "prenom": "Awa",
-      "nom": "Diatta",
+      "nom": "diop",
       "adresse": "Dakar",
-      "tel": "764531234",
-      "sexe": "Feminin",
+      "tel": "764531230",
+      "sexe": "Femme",
       "metiers": [
         "Développeur",
-        "Autre"
-      ]
+        "Designer"
+      ],
+      "id": "1"
     },
     {
       "id": "11",
@@ -29,10 +40,22 @@
       "nom": "mar",
       "adresse": "Dakar",
       "tel": "709876645",
-      "sexe": "Masculin",
+      "sexe": "Homme",
       "metiers": [
         "Développeur",
         "Designer"
+      ]
+    },
+    {
+      "id": "111",
+      "prenom": "Awa",
+      "nom": "Ndiaye",
+      "adresse": "Baol",
+      "tel": "772538947",
+      "sexe": "Femme",
+      "metiers": [
+        "Développeur",
+        "Comptable"
       ]
     }
   ],

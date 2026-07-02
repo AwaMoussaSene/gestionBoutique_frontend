@@ -9,193 +9,328 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
     />
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css" />
   </head>
   <body class="bg-gray-100">
-
     <div class="flex h-screen">
-
       <!-- Sidebar pleine hauteur -->
-     <aside class="w-64 min-w-64 bg-orange-500 text-white flex flex-col h-screen sticky top-0">
+      <aside
+        class="w-64 min-w-64 bg-orange-500 text-white flex flex-col h-screen sticky top-0"
+      >
         <div class="px-4 py-5 text-xl font-bold border-b border-white/20">
           🛍 Boutique
         </div>
 
         <!-- Liens nav -->
         <nav class="flex-1 p-3 space-y-1">
-          <a href="produit.html"
-            class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-white/20 font-medium text-white text-sm">
+          <a
+            href="produit.html"
+            class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-white/20 font-medium text-white text-sm"
+          >
             <i class="fas fa-box w-4"></i> Produits
           </a>
-          <a href="utilisateur.html"
-            class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/15 text-white/85 hover:text-white text-sm transition">
+          <a
+            href="utilisateur.html"
+            class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/15 text-white/85 hover:text-white text-sm transition"
+          >
             <i class="fas fa-users w-4"></i> Utilisateurs
           </a>
         </nav>
 
         <!-- Déconnexion en bas -->
         <div class="border-t border-white/20">
-          <a href="#"
-            class="flex items-center gap-3 px-4 py-4 text-white/85 hover:bg-white/15 hover:text-white text-sm transition">
+          <a
+            href="#"
+            class="flex items-center gap-3 px-4 py-4 text-white/85 hover:bg-white/15 hover:text-white text-sm transition"
+          >
             <i class="fas fa-sign-out-alt w-4"></i> Déconnexion
           </a>
         </div>
       </aside>
       <!-- Colonne principale -->
       <div class="flex-1 flex flex-col overflow-hidden">
-
         <!-- Topbar uniquement au-dessus du contenu -->
-        <header class="bg-white border-b border-gray-200 px-6 py-3 flex items-center justify-between shadow-sm">
+        <header
+          class="bg-white border-b border-gray-200 px-6 py-3 flex items-center justify-between shadow-sm"
+        >
           <h1 class="text-base font-semibold text-gray-800">Tableau de bord</h1>
           <div class="flex items-center gap-3 text-sm text-gray-600">
             <span>Bonjour, <strong>Awa</strong></span>
-            <img src="https://i.pravatar.cc/40" alt="avatar" class="w-9 h-9 rounded-full" />
+            <img
+              src="https://i.pravatar.cc/40"
+              alt="avatar"
+              class="w-9 h-9 rounded-full"
+            />
           </div>
         </header>
 
         <!-- Contenu scrollable -->
         <main class="flex-1 overflow-y-auto p-6 space-y-6">
-
-          <!-- Formulaire -->
-          <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
-            <h2 class="text-lg font-semibold text-gray-800 mb-5 pb-3 border-b-2 border-orange-200">
-              Formulaire d'ajout
-            </h2>
-
-            <form id="userForm" class="space-y-4">
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-1">Prénom</label>
-                  <input type="text" id="prenom" placeholder="Ex : Fatou"
-                    class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-orange-400" />
-                  <p class="text-red-500 text-xs mt-1" id="error-prenom"></p>
-                </div>
-                <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-1">Nom</label>
-                  <input type="text" id="nom" placeholder="Ex : Diallo"
-                    class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-orange-400" />
-                  <p class="text-red-500 text-xs mt-1" id="error-nom"></p>
-                </div>
-                <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-1">Adresse</label>
-                  <input type="text" id="adresse" placeholder="Ex : Dakar, Plateau"
-                    class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-orange-400" />
-                  <p class="text-red-500 text-xs mt-1" id="error-adresse"></p>
-                </div>
-                <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-1">Téléphone</label>
-                  <input type="tel" id="tel" placeholder="Ex : 77 000 00 00"
-                    class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-orange-400" />
-                  <p class="text-red-500 text-xs mt-1" id="error-tel"></p>
-                </div>
+          <div class="flex h-screen">
+            <!-- TABLE SECTION -->
+            <div
+              id="tableSection"
+              class="flex-1 transition-all duration-300 p-4"
+            >
+              <!-- bouton -->
+              <div class="flex justify-end mb-4">
+                <button
+                  onclick="openDrawer()"
+                  class="bg-orange-500 text-white px-4 py-2 rounded-lg"
+                >
+                  + Ajouter utilisateur
+                </button>
               </div>
 
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-1">
-                <div>
-                  <span class="block text-sm font-medium text-gray-700 mb-2">Sexe</span>
-                  <div class="flex gap-6">
-                    <label class="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
-                      <input type="radio" name="sexe" value="Masculin" class="accent-orange-500 w-4 h-4" />
-                      Masculin
-                    </label>
-                    <label class="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
-                      <input type="radio" name="sexe" value="Feminin" class="accent-orange-500 w-4 h-4" />
-                      Féminin
-                    </label>
+              <!-- tableau -->
+              <div class="bg-white rounded-lg shadow">
+                <!-- ton tableau ici -->
+                <div
+                  class="bg-white rounded-xl border border-gray-200 shadow-sm"
+                >
+                  <div
+                    class="flex items-center justify-between px-6 py-4 border-b border-gray-200"
+                  >
+                    <h3 class="text-base font-semibold text-gray-800">
+                      Tableau des inscriptions
+                    </h3>
+                    <div class="flex gap-2">
+                      <button
+                        id="btnList"
+                        class="bg-orange-500 text-white text-sm font-medium px-4 py-1.5 rounded-lg hover:bg-orange-600 transition"
+                      >
+                        Liste
+                      </button>
+                      <button
+                        id="btnCard"
+                        class="bg-gray-200 text-gray-700 text-sm font-medium px-4 py-1.5 rounded-lg hover:bg-gray-300 transition"
+                      >
+                        Cards
+                      </button>
+                    </div>
                   </div>
-                  <p class="text-red-500 text-xs mt-1" id="error-sexe"></p>
+
+                  <!-- Vue Liste -->
+                  <div id="tableWrapper" class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                      <thead>
+                        <tr
+                          class="bg-orange-50 text-orange-900 text-xs uppercase font-semibold border-b border-orange-100"
+                        >
+                          <th class="px-4 py-3">Prénom</th>
+                          <th class="px-4 py-3">Nom</th>
+                          <th class="px-4 py-3">Adresse</th>
+                          <th class="px-4 py-3">Tél</th>
+                          <th class="px-4 py-3 text-center">Sexe</th>
+                          <th class="px-4 py-3">Métier(s)</th>
+                          <th class="px-4 py-3 text-center">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody
+                        id="tableBody"
+                        class="divide-y divide-gray-100 text-sm text-gray-700"
+                      >
+                        <tr id="emptyRow">
+                          <td
+                            colspan="7"
+                            class="px-4 py-8 text-center text-gray-400 italic"
+                          >
+                            Aucune donnée enregistrée
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+
+                  <!-- Vue Cards -->
+                  <div
+                    id="cardContainer"
+                    class="hidden grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-6"
+                  ></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- DRAWER SIDE PANEL -->
+            <div
+              id="drawer"
+                class="hidden w-0 transition-all duration-300 bg-white border-l-4 border-orange-400 shadow-[0_0_20px_rgba(249,115,22,0.25)] overflow-y-auto" 
+                  >
+              <div class="p-4">
+                <div class="flex justify-between items-center mb-4">
+                  <h2 id="drawerTitle" class="text-lg font-semibold">
+                    Ajouter utilisateur
+                  </h2>
+
+                  <button onclick="closeDrawer()">✕</button>
                 </div>
 
-                <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-1">Métier(s)</label>
-                  <div class="relative">
-                    <button type="button" id="selectBtn"
-                      class="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white text-left text-sm text-gray-500 hover:border-orange-400 transition">
-                      Sélectionner un ou plusieurs métiers ▾
-                    </button>
-                    <div id="dropdownMetier"
-                      class="hidden absolute z-10 mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-lg p-3 space-y-2">
-                      <label class="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
-                        <input type="checkbox" value="Développeur" class="metier accent-orange-500" /> Développeur
+                <!-- ton form -->
+                <form id="userForm" class="space-y-3">
+                  <!-- prénom -->
+                  <div>
+                    <label>Prénom</label>
+                    <input id="prenom" class="w-full border rounded-lg p-2" />
+
+                    <p id="error-prenom" class="text-red-500 text-sm"></p>
+                  </div>
+
+                  <!-- nom -->
+                  <div>
+                    <label>Nom</label>
+
+                    <input id="nom" class="w-full border rounded-lg p-2" />
+
+                    <p id="error-nom" class="text-red-500 text-sm"></p>
+                  </div>
+
+                  <!-- adresse -->
+                  <div>
+                    <label>Adresse</label>
+
+                    <input id="adresse" class="w-full border rounded-lg p-2" />
+
+                    <p id="error-adresse" class="text-red-500 text-sm"></p>
+                  </div>
+
+                  <!-- téléphone -->
+                  <div>
+                    <label>Téléphone</label>
+
+                    <input id="tel" class="w-full border rounded-lg p-2" />
+
+                    <p id="error-tel" class="text-red-500 text-sm"></p>
+                  </div>
+
+                  <!-- sexe -->
+
+                  <div>
+                    <label class="block mb-2">Sexe</label>
+
+                    <div class="flex gap-5">
+                      <label>
+                        <input type="radio" name="sexe" value="Homme" />
+
+                        Homme
                       </label>
-                      <label class="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
-                        <input type="checkbox" value="Designer" class="metier accent-orange-500" /> Designer
-                      </label>
-                      <label class="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
-                        <input type="checkbox" value="Manager" class="metier accent-orange-500" /> Manager
-                      </label>
-                      <label class="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
-                        <input type="checkbox" value="Autre" class="metier accent-orange-500" /> Autre
+
+                      <label>
+                        <input type="radio" name="sexe" value="Femme" />
+
+                        Femme
                       </label>
                     </div>
-                    <p class="text-red-500 text-xs mt-1" id="error-metier"></p>
+
+                    <p id="error-sexe" class="text-red-500 text-sm"></p>
                   </div>
-                </div>
-              </div>
 
-              <div class="flex justify-end pt-2">
-                <button type="submit"
-                  class="bg-orange-500 hover:bg-orange-600 text-white font-medium text-sm px-6 py-2.5 rounded-lg transition shadow-sm">
-                  <i class="fas fa-save mr-2"></i> Enregistrer
-                </button>
+                  <!-- métiers -->
+
+                  <div>
+                    <label class="block mb-2"> Métiers </label>
+
+                    <button
+                      type="button"
+                      id="selectBtn"
+                      class="w-full border rounded-lg p-2 text-left"
+                    >
+                      Sélectionner métiers
+                    </button>
+
+                    <div
+                      id="dropdownMetier"
+                      class="hidden border rounded-lg mt-2 p-3 bg-white"
+                    >
+                      <label class="block">
+                        <input
+                          class="metier"
+                          type="checkbox"
+                          value="Développeur"
+                        />
+
+                        Développeur
+                      </label>
+
+                      <label class="block">
+                        <input
+                          class="metier"
+                          type="checkbox"
+                          value="Designer"
+                        />
+
+                        Designer
+                      </label>
+
+                      <label class="block">
+                        <input
+                          class="metier"
+                          type="checkbox"
+                          value="Comptable"
+                        />
+
+                        Comptable
+                      </label>
+                    </div>
+
+                    <p id="error-metier" class="text-red-500 text-sm"></p>
+                  </div>
+
+                  <div class="flex justify-end gap-3 pt-5">
+                    <button
+                      type="button"
+                      onclick="closeDrawer()"
+                      class="px-4 py-2 rounded-lg bg-gray-200 cursor-pointer"
+                    >
+                      Annuler
+                    </button>
+
+                    <button
+                      class="px-4 py-2 rounded-lg bg-orange-500 text-white cursor-pointer"
+                    >
+                      Enregistrer
+                    </button>
+                  </div>
+                </form>
               </div>
-            </form>
+            </div>
           </div>
-
-          <!-- Tableau -->
-          <div class="bg-white rounded-xl border border-gray-200 shadow-sm">
-            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200">
-              <h3 class="text-base font-semibold text-gray-800">Tableau des inscriptions</h3>
-              <div class="flex gap-2">
-                <button id="btnList"
-                  class="bg-orange-500 text-white text-sm font-medium px-4 py-1.5 rounded-lg hover:bg-orange-600 transition">
-                  Liste
-                </button>
-                <button id="btnCard"
-                  class="bg-gray-200 text-gray-700 text-sm font-medium px-4 py-1.5 rounded-lg hover:bg-gray-300 transition">
-                  Cards
-                </button>
-              </div>
-            </div>
-
-            <!-- Vue Liste -->
-            <div id="tableWrapper" class="overflow-x-auto">
-              <table class="w-full text-left border-collapse">
-                <thead>
-                  <tr class="bg-orange-50 text-orange-900 text-xs uppercase font-semibold border-b border-orange-100">
-                    <th class="px-4 py-3">Prénom</th>
-                    <th class="px-4 py-3">Nom</th>
-                    <th class="px-4 py-3">Adresse</th>
-                    <th class="px-4 py-3">Tél</th>
-                    <th class="px-4 py-3 text-center">Sexe</th>
-                    <th class="px-4 py-3">Métier(s)</th>
-                    <th class="px-4 py-3 text-center">Actions</th>
-                  </tr>
-                </thead>
-                <tbody id="tableBody" class="divide-y divide-gray-100 text-sm text-gray-700">
-                  <tr id="emptyRow">
-                    <td colspan="7" class="px-4 py-8 text-center text-gray-400 italic">
-                      Aucune donnée enregistrée
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-
-            <!-- Vue Cards -->
-            <div id="cardContainer"
-              class="hidden grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-6">
-            </div>
-          </div>
-
         </main>
       </div>
     </div>
-<!-- TOAST CONTAINER -->
-<div id="toastContainer"
-     class="fixed top-5 right-5 space-y-3 z-50">
-</div>
+    <!-- TOAST CONTAINER -->
+    <div id="toastContainer" class="fixed top-5 right-5 space-y-3 z-50"></div>
+<!-- DELETE MODAL -->
+<div id="deleteModal"
+  class="fixed inset-0 bg-black/40 hidden items-center justify-center z-50">
 
-<script src="utilisateur.js"></script>
+  <div class="bg-white rounded-xl p-6 w-full max-w-sm shadow-lg">
+
+    <h2 class="text-lg font-semibold text-gray-800">
+      Confirmer la suppression
+    </h2>
+
+    <p class="text-sm text-gray-500 mt-2">
+      Voulez-vous vraiment supprimer ce produit ?
+    </p>
+
+    <div class="flex justify-end gap-2 mt-5">
+
+      <button onclick="closeDeleteModal()"
+        class="px-4 py-2 bg-gray-200 rounded-lg">
+        Annuler
+      </button>
+
+      <button onclick="confirmDelete()"
+        class="px-4 py-2 bg-red-500 text-white rounded-lg">
+        Supprimer
+      </button>
+
+    </div>
+
+  </div>
+</div>
+<!-- la pagination -->
+<div id="pagination" class="flex justify-end gap-2 mt-4"></div>
+    <script src="utilisateur.js"></script>
   </body>
 </html>
